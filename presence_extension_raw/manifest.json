@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "Discord Presence",
+    "version": "0.1",
+
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+
+    "action": {
+        "default_title": "Presence_extension",
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["socket.io.min.js", "contentScript.js"]
+        }
+    ],
+    "permissions": ["tabs"]
+}

@@ -11,6 +11,8 @@ const io = new Server(server, {
     },
 });
 
+app.use(express.json());
+
 app.use(
     cors({
         origin: "*",
@@ -23,8 +25,20 @@ io.on("connection", (socket) => {
     console.log("connected!");
 
     socket.on("hew", () => {
-        console.log("hey");
+        io.emit("event_emitted", {
+            details: "Visiting Chess.com",
+            state: "Not in game",
+        });
     });
+
+    socket.on("ext", () => {
+        console.log("extension connected!");
+    });
+});
+
+app.post("/check", (req, res) => {
+    console.log(req.body);
+    res.send("check");
 });
 
 const PORT = 5000;

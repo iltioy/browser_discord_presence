@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/chrome": "^0.0.243",
+    "socket.io-client": "^4.7.1"
+  }
+}
