@@ -12,23 +12,27 @@ const client = new RPC.Client({
 client.on("ready", async () => {
     console.log("ready!");
 
-    socket.on("event_emitted", async (body) => {
-        console.log("got event!");
+    socket.emit("join_room", {
+        roomId: "8aa170ccb8fa6c36",
+    });
 
-        try {
-            await client.setActivity({
-                largeImageKey:
-                    "https://a6d5a5g3.rocketcdn.me/wp-content/uploads/2022/12/chess-play-learn-logo-2048x2048.jpg",
-                // partySize: 10,
-                // partyMax: 5,
-                // partyId: "123",
-                details: body.details,
-                state: body.state,
-                startTimestamp: Date.now(),
-            });
-        } catch (error) {
-            console.log(error);
-        }
+    socket.on("tabChanged", async (body) => {
+        console.log(body);
+
+        // try {
+        //     await client.setActivity({
+        //         largeImageKey:
+        //             "https://a6d5a5g3.rocketcdn.me/wp-content/uploads/2022/12/chess-play-learn-logo-2048x2048.jpg",
+        //         // partySize: 10,
+        //         // partyMax: 5,
+        //         // partyId: "123",
+        //         details: body.details,
+        //         state: body.state,
+        //         startTimestamp: Date.now(),
+        //     });
+        // } catch (error) {
+        //     console.log(error);
+        // }
     });
 });
 

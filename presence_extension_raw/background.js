@@ -1,17 +1,45 @@
-chrome.tabs.onActivated.addListener(async () => {
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+chrome.runtime.onInstalled.addListener(async () => {
+    try {
+        const res = await fetch("http://localhost:5000/getUniqueRoomId");
+        const { roomId } = await res.json();
 
-    const tab = tabs[0];
-    console.log(tab);
+        if (!roomId) return;
 
-    const res = await fetch("http://localhost:5000/check", {
-        headers: {
-            "Content-Type": "application/json",
-        },
-        method: "POST",
-
-        body: JSON.stringify(tab),
-    });
-
-    console.log(res);
+        await chrome.storage.sync.set({ roomId });
+    } catch (error) {
+        console.log(error);
+    }
 });
+
+const sendTabInfo = async () => {
+    try {
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        const tab = tabs[0];
+
+        const storage = await chrome.storage.sync.get();
+        const roomId = storage.roomId;
+
+        const data = {
+            tab,
+            roomId,
+        };
+
+        console.log(data);
+
+        const res = await fetch("http://localhost:5000/tabChanged", {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: "POST",
+
+            body: JSON.stringify(data),
+        });
+
+        console.log(res);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+chrome.tabs.onActivated.addListener(sendTabInfo);
+chrome.tabs.onUpdated.addListener(sendTabInfo);

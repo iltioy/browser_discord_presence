@@ -4,6 +4,7 @@ const express = require("express");
 const http = require("http");
 const app = express();
 const server = http.createServer(app);
+const { uid } = require("uid");
 
 const io = new Server(server, {
     cors: {
@@ -31,14 +32,27 @@ io.on("connection", (socket) => {
         });
     });
 
-    socket.on("ext", () => {
-        console.log("extension connected!");
+    socket.on("join_room", (body) => {
+        socket.join(body.roomId);
     });
 });
 
-app.post("/check", (req, res) => {
+app.post("/tabChanged", (req, res) => {
     console.log(req.body);
-    res.send("check");
+    const { roomId, tab } = req.body;
+
+    io.to(roomId).emit("tabChanged", {
+        roomId,
+        tab,
+    });
+
+    res.status(200).send("tabChanged");
+});
+
+app.get("/getUniqueRoomId", (req, res) => {
+    const roomId = uid(16);
+
+    res.status(200).json({ roomId });
 });
 
 const PORT = 5000;

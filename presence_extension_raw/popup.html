@@ -5,8 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <script src="./socket.io.min.js"></script>
-        <script src="popup.js"></script>
+        <script src="popup.js" defer></script>
         <title>Document</title>
     </head>
-    <body></body>
+    <body>
+        <div id="roomIdContainer"></div>
+        <input type="text" id="roomIdInput" />
+        <button id="saveRoomIdButton">Save</button>
+    </body>
 </html>

@@ -18,5 +18,5 @@
             "js": ["socket.io.min.js", "contentScript.js"]
         }
     ],
-    "permissions": ["tabs"]
+    "permissions": ["tabs", "storage"]
 }
