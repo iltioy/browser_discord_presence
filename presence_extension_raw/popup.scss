@@ -19,14 +19,16 @@ body {
 }
 
 .disabled {
-    display: none;
+    display: none !important;
+}
+
+.page {
+    height: 325px;
+    width: 100%;
+    display: flex;
 }
 
 .codePage {
-    height: 325px;
-    width: 100%;
-
-    display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -36,7 +38,7 @@ body {
         font-weight: bold;
     }
 
-    .saveRoomIdButton {
+    .restoreRoomIdButton {
         outline: none;
         border: none;
         background-color: orange;
@@ -68,5 +70,65 @@ body {
 
     .activeNavbarItem {
         border-bottom: 1px solid grey;
+    }
+}
+
+.currentPageSettings {
+    .wrapper {
+        padding: 15px;
+        height: 100%;
+        width: 87%;
+    }
+
+    padding: 15px;
+    align-items: center;
+    flex-direction: column;
+
+    .imageUploadInput {
+        margin-top: 13px;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .uploadIcon {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+        }
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+}
+
+.settingsPage {
+    flex-direction: column;
+    align-items: center;
+
+    .wrapper {
+        width: 87%;
+        height: 100%;
+        padding: 15px;
+    }
+
+    .settingsItem {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        font-size: 18px;
+        margin-top: 5px;
+
+        .settingTitle {
+            flex: 1;
+        }
+
+        .editButton {
+            color: rgb(40, 40, 255);
+            cursor: pointer;
+        }
     }
 }

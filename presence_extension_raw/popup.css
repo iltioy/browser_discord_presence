@@ -18,13 +18,16 @@ body {
 }
 
 .disabled {
-  display: none;
+  display: none !important;
 }
 
-.codePage {
+.page {
   height: 325px;
   width: 100%;
   display: flex;
+}
+
+.codePage {
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -33,7 +36,7 @@ body {
   font-size: 25px;
   font-weight: bold;
 }
-.codePage .saveRoomIdButton {
+.codePage .restoreRoomIdButton {
   outline: none;
   border: none;
   background-color: orange;
@@ -60,4 +63,56 @@ body {
 }
 .bottomNavbar .activeNavbarItem {
   border-bottom: 1px solid grey;
+}
+
+.currentPageSettings {
+  padding: 15px;
+  align-items: center;
+  flex-direction: column;
+}
+.currentPageSettings .wrapper {
+  padding: 15px;
+  height: 100%;
+  width: 87%;
+}
+.currentPageSettings .imageUploadInput {
+  margin-top: 13px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.currentPageSettings .imageUploadInput .uploadIcon {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+}
+.currentPageSettings input[type=file] {
+  display: none;
+}
+
+.settingsPage {
+  flex-direction: column;
+  align-items: center;
+}
+.settingsPage .wrapper {
+  width: 87%;
+  height: 100%;
+  padding: 15px;
+}
+.settingsPage .settingsItem {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  font-size: 18px;
+  margin-top: 5px;
+}
+.settingsPage .settingsItem .settingTitle {
+  flex: 1;
+}
+.settingsPage .settingsItem .editButton {
+  color: rgb(40, 40, 255);
+  cursor: pointer;
 }/*# sourceMappingURL=popup.css.map */

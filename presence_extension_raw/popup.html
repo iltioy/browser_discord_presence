@@ -11,14 +11,51 @@
     </head>
     <body>
         <div class="App">
-            <div class="codePage">
+            <div pageId="1" class="codePage page">
                 <div class="roomIdContainer"></div>
-                <button class="saveRoomIdButton">Restore Code</button>
+                <button class="restoreRoomIdButton">Restore Code</button>
+            </div>
+
+            <div pageId="2" class="currentPageSettings page disabled">
+                <div class="wrapper">
+                    <div class="uploadIconWrapper" style="font-size: medium">
+                        Upload Custom Icon for This Page:
+
+                        <label for="imageUpload" class="imageUploadInput">
+                            <img src="./assets/upload.png" class="uploadIcon" alt="Uplaod Icon" />
+                            Upload</label
+                        >
+                        <input
+                            type="file"
+                            id="imageUpload"
+                            class="imageUploadInput"
+                            accept="image/png, image/jpg, image/jpeg"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div pageId="3" class="settingsPage page disabled">
+                <div class="wrapper">
+                    <div class="settingsItem">
+                        <div class="settingTitle">White List</div>
+                        <div class="editButton">Edit</div>
+                    </div>
+                    <div class="settingsItem">
+                        <div class="settingTitle">Black List</div>
+                        <div class="editButton">Edit</div>
+                    </div>
+                    <div class="settingsItem">
+                        <div class="settingTitle">Custom Interfaces</div>
+                        <div class="editButton">Edit</div>
+                    </div>
+                </div>
             </div>
 
             <div class="bottomNavbar">
-                <div class="navbarItem activeNavbarItem">Code</div>
-                <div class="navbarItem">This Page</div>
+                <div pageId="1" class="navbarItem activeNavbarItem">Code</div>
+                <div pageId="2" class="navbarItem">This Page</div>
+                <div pageId="3" class="navbarItem">Settings</div>
             </div>
         </div>
     </body>

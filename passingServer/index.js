@@ -5,6 +5,9 @@ const http = require("http");
 const app = express();
 const server = http.createServer(app);
 const { uid } = require("uid");
+const fs = require("fs");
+const upload = require("./services/fileUpload");
+const { uploadFile } = require("./services/bucket");
 
 const io = new Server(server, {
     cors: {
@@ -53,6 +56,18 @@ app.get("/getUniqueRoomId", (req, res) => {
     const roomId = uid(16);
 
     res.status(200).json({ roomId });
+});
+
+app.post(upload.single("image"), async (req, res) => {
+    const file = req.file;
+    const result = await uploadFile(file);
+
+    fs.unlinkSync(req.file.path);
+
+    res.json({
+        imagePath: result.Location,
+        imageKey: result.Key,
+    });
 });
 
 const PORT = 5000;

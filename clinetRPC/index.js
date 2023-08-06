@@ -14,11 +14,11 @@ client.on("ready", async () => {
     console.log("ready!");
 
     socket.emit("join_room", {
-        roomId: "6d95e0a1dfb3ba7f",
+        roomId: "617ee43e0acd91de",
     });
 
     socket.on("tabChanged", async (body) => {
-        // console.log(body);
+        console.log(body);
 
         try {
             if (!body || !body.tab) return;

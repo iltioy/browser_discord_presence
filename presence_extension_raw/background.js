@@ -24,8 +24,6 @@ const sendTabInfo = async () => {
             roomId,
         };
 
-        console.log(data);
-
         const res = await fetch("http://localhost:5000/tabChanged", {
             headers: {
                 "Content-Type": "application/json",
@@ -34,8 +32,6 @@ const sendTabInfo = async () => {
 
             body: JSON.stringify(data),
         });
-
-        console.log(res);
     } catch (error) {
         console.log(error);
     }
