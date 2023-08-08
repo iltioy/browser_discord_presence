@@ -1,6 +1,7 @@
 const { Server } = require("socket.io");
 const cors = require("cors");
 const express = require("express");
+require("express-async-errors");
 const http = require("http");
 const app = express();
 const server = http.createServer(app);
@@ -58,15 +59,30 @@ app.get("/getUniqueRoomId", (req, res) => {
     res.status(200).json({ roomId });
 });
 
-app.post(upload.single("image"), async (req, res) => {
+app.post("/uploadPageIcon", upload.single("image"), async (req, res) => {
+    setTimeout(() => {
+        fs.unlinkSync(req.file.path);
+    }, 5000);
+
+    let tabUrl;
+
+    const tab = JSON.parse(req.body.tab);
+
+    if (tab.url) {
+        tabUrl = tab.url.split("://")[1].split("/")[0];
+
+        if (tabUrl.startsWith("www.")) {
+            tabUrl = tabUrl.slice(4);
+        }
+    }
+
     const file = req.file;
     const result = await uploadFile(file);
 
-    fs.unlinkSync(req.file.path);
-
-    res.json({
+    res.status(200).json({
         imagePath: result.Location,
         imageKey: result.Key,
+        tabUrl,
     });
 });
 

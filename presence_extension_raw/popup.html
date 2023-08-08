@@ -18,19 +18,26 @@
 
             <div pageId="2" class="currentPageSettings page disabled">
                 <div class="wrapper">
-                    <div class="uploadIconWrapper" style="font-size: medium">
+                    <div style="font-size: medium">
                         Upload Custom Icon for This Page:
 
-                        <label for="imageUpload" class="imageUploadInput">
-                            <img src="./assets/upload.png" class="uploadIcon" alt="Uplaod Icon" />
-                            Upload</label
-                        >
-                        <input
-                            type="file"
-                            id="imageUpload"
-                            class="imageUploadInput"
-                            accept="image/png, image/jpg, image/jpeg"
-                        />
+                        <div class="imageUploadField">
+                            <label for="imageUpload" class="imageUploadInput">
+                                <img
+                                    src="./assets/upload.png"
+                                    class="uploadIcon"
+                                    alt="Uplaod Icon"
+                                />
+                                Upload</label
+                            >
+                            <input
+                                type="file"
+                                id="imageUpload"
+                                accept="image/png, image/jpg, image/jpeg"
+                            />
+
+                            <span class="uploadedFileInfo">No Image Uploaded</span>
+                        </div>
                     </div>
                 </div>
             </div>

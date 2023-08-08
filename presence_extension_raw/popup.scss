@@ -84,14 +84,23 @@ body {
     align-items: center;
     flex-direction: column;
 
-    .imageUploadInput {
+    .imageUploadField {
         margin-top: 13px;
-        outline: none;
-        border: none;
-        cursor: pointer;
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        .uploadedFileInfo {
+            color: grey;
+            font-size: small;
+            margin-left: 20px;
+        }
+    }
+
+    .imageUploadInput {
+        outline: none;
+        border: none;
+        cursor: pointer;
 
         .uploadIcon {
             width: 15px;

@@ -75,14 +75,21 @@ body {
   height: 100%;
   width: 87%;
 }
-.currentPageSettings .imageUploadInput {
+.currentPageSettings .imageUploadField {
   margin-top: 13px;
-  outline: none;
-  border: none;
-  cursor: pointer;
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+.currentPageSettings .imageUploadField .uploadedFileInfo {
+  color: grey;
+  font-size: small;
+  margin-left: 20px;
+}
+.currentPageSettings .imageUploadInput {
+  outline: none;
+  border: none;
+  cursor: pointer;
 }
 .currentPageSettings .imageUploadInput .uploadIcon {
   width: 15px;

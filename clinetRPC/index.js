@@ -24,10 +24,7 @@ client.on("ready", async () => {
             if (!body || !body.tab) return;
             const { tab } = body;
 
-            console.log(tab);
-
             let tabUrl;
-
             let isIconAvailable = true;
 
             if (

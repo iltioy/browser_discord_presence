@@ -49,3 +49,38 @@ document.querySelector(".restoreRoomIdButton").addEventListener("click", async (
         console.log(error);
     }
 });
+
+document.querySelector("#imageUpload").addEventListener("change", async () => {
+    try {
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        const tab = tabs[0];
+
+        const input = document.querySelector("#imageUpload");
+        const image = input.files[0];
+
+        const formData = new FormData();
+        formData.append("image", image);
+        formData.append("tab", JSON.stringify(tab));
+
+        const options = {
+            method: "POST",
+            body: formData,
+        };
+
+        const res = await fetch("http://localhost:5000/uploadPageIcon", options);
+        const data = await res.json();
+
+        if (!data.tabUrl) return;
+
+        let { tabUrl, imagePath, imageKey } = data;
+
+        await chrome.storage.sync.set({
+            [tabUrl]: {
+                imagePath,
+                imageKey,
+            },
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
