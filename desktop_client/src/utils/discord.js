@@ -12,19 +12,28 @@ const joinRoom = (roomId) => {
     });
 };
 
-const getTabInfo = (tab) => {
-    let tabUrl;
-    let isIconAvailable = true;
-    if (
-        !tab.favIconUrl ||
-        !(
-            tab.favIconUrl.endsWith(".jpg") ||
-            tab.favIconUrl.endsWith(".jpeg") ||
-            tab.favIconUrl.endsWith(".png")
-        )
-    ) {
-        isIconAvailable = false;
+const getIconUrl = (tab, additionalInfo) => {
+    if (additionalInfo && additionalInfo.imagePath) {
+        return additionalInfo.imagePath;
     }
+
+    let iconUrl = "https://discord.hb.ru-msk.vkcs.cloud/internet.jpg";
+
+    if (
+        tab.favIconUrl &&
+        (tab.favIconUrl.endsWith(".jpg") ||
+            tab.favIconUrl.endsWith(".jpeg") ||
+            tab.favIconUrl.endsWith(".png"))
+    ) {
+        iconUrl = tab.favIconUrl;
+    }
+
+    return iconUrl;
+};
+
+const getTabInfo = (tab, additionalInfo) => {
+    let tabUrl;
+    const iconUrl = getIconUrl(tab, additionalInfo);
 
     if (tab.url) {
         tabUrl = tab.url.split("://")[1].split("/")[0];
@@ -34,7 +43,7 @@ const getTabInfo = (tab) => {
         }
     }
 
-    return { tabUrl, isIconAvailable };
+    return { tabUrl, iconUrl };
 };
 
 const setupListeners = (client, socket) => {
@@ -43,16 +52,12 @@ const setupListeners = (client, socket) => {
             console.log(body);
             try {
                 if (!body || !body.tab) return;
-                const { tab } = body;
+                const { tab, additionalInfo } = body;
 
-                const { tabUrl, isIconAvailable } = getTabInfo(tab);
+                const { tabUrl, iconUrl } = getTabInfo(tab, additionalInfo);
 
                 await client.setActivity({
-                    largeImageKey: `${
-                        isIconAvailable
-                            ? tab.favIconUrl
-                            : "https://discord.hb.ru-msk.vkcs.cloud/internet.jpg"
-                    }`,
+                    largeImageKey: iconUrl,
                     state: `Visiting ${tabUrl}`,
                     startTimestamp: Date.now(),
                 });
@@ -73,9 +78,7 @@ const setupConnection = () => {
         setInterval(() => {
             if (socket.connected === true) {
                 socketConnected = true;
-                discordConnected && socketConnected
-                    ? resolve("connected")
-                    : null;
+                discordConnected && socketConnected ? resolve("connected") : null;
             }
         }, 1000);
 

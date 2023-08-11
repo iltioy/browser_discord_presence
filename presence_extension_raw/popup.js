@@ -1,11 +1,16 @@
+const roomIdContainer = document.querySelector(".roomIdContainer");
+let navbarItems = document.querySelectorAll(".navbarItem");
+const pageItems = document.querySelectorAll(".page");
+const restoreRoomIdButton = document.querySelector(".restoreRoomIdButton");
+const imageUpload = document.querySelector("#imageUpload");
+const uploadedFileInfo = document.querySelector(".uploadedFileInfo");
+
 const setRoomId = async () => {
     storage = await chrome.storage.sync.get();
-    document.querySelector(".roomIdContainer").innerText = storage.roomId;
+    roomIdContainer.innerText = storage.roomId;
 };
 
 setRoomId();
-
-let navbarItems = document.querySelectorAll(".navbarItem");
 
 navbarItems.forEach((element) => {
     element.addEventListener("click", () => {
@@ -13,10 +18,36 @@ navbarItems.forEach((element) => {
     });
 });
 
+const getTabInfo = async () => {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tab = tabs[0];
+
+    if (!tab) return;
+
+    const storage = await chrome.storage.sync.get();
+
+    let tabUrl = tab.url.split("://")[1].split("/")[0];
+    if (tabUrl.startsWith("www.")) {
+        tabUrl = tabUrl.slice(4);
+    }
+
+    return storage[tabUrl];
+};
+
+const loadPageInfo = async () => {
+    const tabInfo = await getTabInfo();
+    console.log(tabInfo);
+    if (!tabInfo) return;
+
+    const { imagePath, imageName } = tabInfo;
+
+    if (imageName) {
+        uploadedFileInfo.innerText = imageName;
+    }
+};
+
 const handleNavigation = (element) => {
     const pageId = element.getAttribute("pageId");
-
-    const pageItems = document.querySelectorAll(".page");
 
     pageItems.forEach((el) => {
         if (el.getAttribute("pageId") !== pageId) {
@@ -35,7 +66,9 @@ const handleNavigation = (element) => {
     });
 };
 
-document.querySelector(".restoreRoomIdButton").addEventListener("click", async () => {
+loadPageInfo();
+
+restoreRoomIdButton.addEventListener("click", async () => {
     try {
         const res = await fetch("http://localhost:5000/getUniqueRoomId");
         const { roomId } = await res.json();
@@ -50,7 +83,7 @@ document.querySelector(".restoreRoomIdButton").addEventListener("click", async (
     }
 });
 
-document.querySelector("#imageUpload").addEventListener("change", async () => {
+imageUpload.addEventListener("change", async () => {
     try {
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
         const tab = tabs[0];
@@ -78,6 +111,7 @@ document.querySelector("#imageUpload").addEventListener("change", async () => {
             [tabUrl]: {
                 imagePath,
                 imageKey,
+                imageName: image.name,
             },
         });
     } catch (error) {

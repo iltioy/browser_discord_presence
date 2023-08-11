@@ -14,7 +14,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 const sendTabInfo = async () => {
     try {
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-        console.log(tabs);
         const tab = tabs[0];
 
         if (!tab) return;
@@ -27,12 +26,14 @@ const sendTabInfo = async () => {
             tabUrl = tabUrl.slice(4);
         }
 
-        let additionalInfo = await chrome.storage.sync.get(tabUrl);
+        let addInfo = storage[tabUrl];
+        // let additionalInfo = await chrome.storage.sync.get(tabUrl);
+        // let addInfo = additionalInfo[Object.keys(additionalInfo)[0]];
 
         const data = {
             tab,
             roomId,
-            additionalInfo,
+            additionalInfo: addInfo,
         };
 
         const res = await fetch("http://localhost:5000/tabChanged", {

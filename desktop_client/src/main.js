@@ -25,8 +25,21 @@ const createWindow = () => {
     });
 
     mainWindow.loadFile(path.join(__dirname, "index.html"));
+
     // mainWindow.webContents.openDevTools();
     mainWindow.webContents.send("code:retrieve");
+};
+
+const makeConnection = () => {
+    setupConnection()
+        .then(() => {
+            console.log("connected");
+            mainWindow.webContents.send("connection:success");
+        })
+        .catch(() => {
+            console.log("error");
+            mainWindow.webContents.send("connection:failed");
+        });
 };
 
 app.on("ready", async () => {
@@ -38,16 +51,13 @@ app.on("ready", async () => {
         joinRoom(code);
     });
 
-    setupConnection()
-        .then(() => {
-            console.log("connected");
-        })
-        .catch(() => {
-            console.log("error");
-        });
+    ipcMain.on("connection:reconnect", () => {
+        makeConnection();
+    });
+
+    makeConnection();
 
     const code = store.get("code");
-
     if (code) {
         joinRoom(code);
         mainWindow.webContents.send("code:retrieve", {

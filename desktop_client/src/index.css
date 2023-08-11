@@ -5,11 +5,15 @@
 
 html,
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     height: 100%;
     width: 100%;
     overflow: hidden;
+    background-color: #232529;
+}
+
+.hidden {
+    display: none !important;
 }
 
 .wrapper {
@@ -17,7 +21,6 @@ body {
     height: 100%;
     display: flex;
     justify-content: center;
-    background-color: #232529;
 }
 
 .codeForm {
@@ -49,8 +52,7 @@ body {
     width: calc(100% - 20px);
 }
 
-.saveButton,
-.reconnectButton {
+.saveButton {
     outline: none;
     border: none;
     padding: 10px;
@@ -59,19 +61,19 @@ body {
     cursor: pointer;
     width: 100%;
     transition: 0.3s;
-}
-
-.saveButton {
     background-color: #97524b;
     margin-bottom: 10px;
 }
 
 .reconnectButton {
-    background-color: #293649;
-}
-
-.reconnectButton:hover {
-    box-shadow: 0px 0px 10px 1px white;
+    margin-top: 25px;
+    color: white;
+    outline: none;
+    border: none;
+    background: none;
+    width: 100px;
+    cursor: pointer;
+    font-size: 20px;
 }
 
 .saveButton:hover {
@@ -82,3 +84,22 @@ body {
 /* .titlebar {
     background-color: red;
 } */
+
+.loading {
+    color: white;
+    width: 80%;
+    position: relative;
+    top: 40%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.loadingError {
+    color: white;
+    width: 80%;
+    position: relative;
+    top: 10%;
+    display: flex;
+    flex-direction: column;
+}

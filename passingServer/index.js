@@ -43,11 +43,12 @@ io.on("connection", (socket) => {
 
 app.post("/tabChanged", (req, res) => {
     console.log(req.body);
-    const { roomId, tab } = req.body;
+    const { roomId, tab, additionalInfo } = req.body;
 
     io.to(roomId).emit("tabChanged", {
         roomId,
         tab,
+        additionalInfo,
     });
 
     res.status(200).send("tabChanged");

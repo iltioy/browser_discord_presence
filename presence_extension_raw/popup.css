@@ -81,10 +81,14 @@ body {
   flex-direction: row;
   align-items: center;
 }
-.currentPageSettings .imageUploadField .uploadedFileInfo {
+.currentPageSettings .uploadedFileInfo {
   color: grey;
   font-size: small;
   margin-left: 20px;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .currentPageSettings .imageUploadInput {
   outline: none;
