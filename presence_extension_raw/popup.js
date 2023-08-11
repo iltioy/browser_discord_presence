@@ -4,13 +4,29 @@ const pageItems = document.querySelectorAll(".page");
 const restoreRoomIdButton = document.querySelector(".restoreRoomIdButton");
 const imageUpload = document.querySelector("#imageUpload");
 const uploadedFileInfo = document.querySelector(".uploadedFileInfo");
+const pinPageCheckbox = document.querySelector(".pinPageCheckbox");
 
-const setRoomId = async () => {
-    storage = await chrome.storage.sync.get();
-    roomIdContainer.innerText = storage.roomId;
+const addPageWhiteList = document.querySelector(".addPageWhiteList");
+const addPageBlackList = document.querySelector(".addPageBlackList");
+
+const listItemsContainterWhiteList = document.querySelector(
+    ".listItemsContainterWhiteList"
+);
+const listItemsContainterBlackList = document.querySelector(
+    ".listItemsContainterBlackList"
+);
+
+const settingsSubPages = document.querySelectorAll(".settingsSubPage");
+const settingsNavigationItems = document.querySelectorAll(".settingsNav");
+
+const getStorageAndTab = async () => {
+    let storage = await chrome.storage.sync.get();
+
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tab = tabs[0];
+
+    return { tab, storage };
 };
-
-setRoomId();
 
 navbarItems.forEach((element) => {
     element.addEventListener("click", () => {
@@ -18,25 +34,41 @@ navbarItems.forEach((element) => {
     });
 });
 
-const getTabInfo = async () => {
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    const tab = tabs[0];
+settingsNavigationItems.forEach((element) => {
+    element.addEventListener("click", () => {
+        handleSettingsNavigation(element);
+    });
+});
 
-    if (!tab) return;
-
-    const storage = await chrome.storage.sync.get();
-
+const getTabUrl = (tab) => {
     let tabUrl = tab.url.split("://")[1].split("/")[0];
     if (tabUrl.startsWith("www.")) {
         tabUrl = tabUrl.slice(4);
     }
 
+    return tabUrl;
+};
+
+const getTabInfo = async () => {
+    const { storage, tab } = await getStorageAndTab();
+
+    if (!tab) return;
+    const tabUrl = getTabUrl(tab);
+
     return storage[tabUrl];
 };
 
 const loadPageInfo = async () => {
+    const { storage, tab } = await getStorageAndTab();
+    roomIdContainer.innerText = storage.roomId;
+
+    if (storage.pinnedPage === tab.id) {
+        pinPageCheckbox.checked = true;
+    }
+
+    console.log(storage);
+
     const tabInfo = await getTabInfo();
-    console.log(tabInfo);
     if (!tabInfo) return;
 
     const { imagePath, imageName } = tabInfo;
@@ -66,7 +98,126 @@ const handleNavigation = (element) => {
     });
 };
 
+const handleSettingsNavigation = (element) => {
+    const pageId = element.getAttribute("pageId");
+
+    settingsSubPages.forEach((el) => {
+        if (el.getAttribute("pageId") !== pageId) {
+            el.classList.add("disabled");
+        } else {
+            el.classList.remove("disabled");
+        }
+    });
+
+    if (pageId === "2") {
+        updateList("whiteList");
+    } else if (pageId === "3") {
+        updateList("blackList");
+    }
+};
+
 loadPageInfo();
+
+const updateList = async (listName) => {
+    const { storage } = await getStorageAndTab();
+
+    let listItems;
+    let container;
+    if (listName === "whiteList") {
+        listItems = storage.whiteList;
+        container = listItemsContainterWhiteList;
+    } else {
+        listItems = storage.blackList;
+        container = listItemsContainterBlackList;
+    }
+
+    if (!listItems) return;
+
+    container.innerHTML = "";
+
+    for (let i = 0; i < listItems.length; i++) {
+        let listItemDiv = document.createElement("div");
+        listItemDiv.classList.add("listItem");
+
+        let listNameDiv = document.createElement("div");
+        listNameDiv.classList.add("listName");
+        listNameDiv.innerText = listItems[i];
+
+        const deleteIconContainterDiv = document.createElement("div");
+        deleteIconContainterDiv.classList.add("deleteIconContainter");
+        const img = document.createElement("img");
+        img.src = "./assets/delete.png";
+        img.classList.add("deleteIcon");
+        img.addEventListener("click", async () => {
+            await handleDeleteListItem(listItems[i], listItemDiv, listName);
+        });
+
+        deleteIconContainterDiv.appendChild(img);
+
+        listItemDiv.appendChild(listNameDiv);
+        listItemDiv.appendChild(deleteIconContainterDiv);
+
+        container.appendChild(listItemDiv);
+    }
+};
+
+const handleDeleteListItem = async (tabUrl, domElement, listName) => {
+    try {
+        const { storage } = await getStorageAndTab();
+        let list;
+        if (listName === "whiteList") {
+            list = storage.whiteList;
+        } else {
+            list = storage.blackList;
+        }
+
+        if (!list) return;
+
+        await chrome.storage.sync.set({
+            [listName]: list.filter((el) => el !== tabUrl),
+        });
+
+        domElement.remove();
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const handleAddItemToList = async (listName) => {
+    const { storage, tab } = await getStorageAndTab();
+    const tabUrl = getTabUrl(tab);
+    let list;
+
+    if (listName === "whiteList") {
+        list = storage.whiteList;
+    } else {
+        list = storage.blackList;
+    }
+
+    if (list) {
+        if (list.includes(tabUrl)) {
+            return;
+        }
+
+        await chrome.storage.sync.set({
+            [listName]: [...list, tabUrl],
+        });
+    } else {
+        await chrome.storage.sync.set({
+            [listName]: [tabUrl],
+        });
+    }
+
+    await updateList(listName);
+};
+
+addPageWhiteList.addEventListener("click", async () => {
+    await handleAddItemToList("whiteList");
+});
+
+addPageBlackList.addEventListener("click", async () => {
+    await handleAddItemToList("blackList");
+});
 
 restoreRoomIdButton.addEventListener("click", async () => {
     try {
@@ -85,7 +236,10 @@ restoreRoomIdButton.addEventListener("click", async () => {
 
 imageUpload.addEventListener("change", async () => {
     try {
-        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        const tabs = await chrome.tabs.query({
+            active: true,
+            currentWindow: true,
+        });
         const tab = tabs[0];
 
         const input = document.querySelector("#imageUpload");
@@ -100,7 +254,10 @@ imageUpload.addEventListener("change", async () => {
             body: formData,
         };
 
-        const res = await fetch("http://localhost:5000/uploadPageIcon", options);
+        const res = await fetch(
+            "http://localhost:5000/uploadPageIcon",
+            options
+        );
         const data = await res.json();
 
         if (!data.tabUrl) return;
@@ -116,5 +273,29 @@ imageUpload.addEventListener("change", async () => {
         });
     } catch (error) {
         console.log(error);
+    }
+});
+
+pinPageCheckbox.addEventListener("change", async (e) => {
+    console.log(e.target.checked);
+    const { storage, tab } = await getStorageAndTab();
+
+    const isCheched = e.target.checked;
+
+    if (isCheched) {
+        console.log("checked");
+        if (storage.pinnedPage !== tab.id) {
+            console.log("changed");
+            await chrome.storage.sync.set({
+                pinnedPage: tab.id,
+            });
+        }
+    } else {
+        if (storage.pinnedPage === tab.id) {
+            console.log("changed2");
+            await chrome.storage.sync.set({
+                pinnedPage: null,
+            });
+        }
     }
 });

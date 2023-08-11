@@ -85,7 +85,7 @@ body {
     flex-direction: column;
 
     .imageUploadField {
-        margin-top: 13px;
+        margin-top: 7px;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -94,10 +94,26 @@ body {
         color: grey;
         font-size: small;
         margin-left: 20px;
-        max-width: 250px;
+        max-width: 150px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .imageUploadSection {
+        margin-bottom: 15px;
+    }
+
+    .pinPageSection {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .pinPageCheckbox {
+            margin-left: 10px;
+            width: 15px;
+            height: 15px;
+        }
     }
 
     .imageUploadInput {
@@ -120,6 +136,7 @@ body {
 .settingsPage {
     flex-direction: column;
     align-items: center;
+    overflow: auto;
 
     .wrapper {
         width: 87%;
@@ -141,6 +158,85 @@ body {
         .editButton {
             color: rgb(40, 40, 255);
             cursor: pointer;
+        }
+    }
+}
+
+.listPage {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    overflow: hidden;
+
+    .listHeaderWrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .backIconDiv {
+            display: flex;
+            width: 17px;
+            height: 17px;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+
+            .backIcon {
+                width: 17px;
+                height: 17px;
+                cursor: pointer;
+            }
+        }
+
+        .listHeader {
+            font-size: 22px;
+        }
+        .addPage {
+            margin-left: auto;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 7px;
+        }
+    }
+
+    .listItemsContainter {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+        flex-direction: column;
+
+        .listItem {
+            height: 20px;
+            font-size: 15px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 3px;
+
+            .listName {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .deleteIconContainter {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-left: auto;
+                .deleteIcon {
+                    cursor: pointer;
+                    width: 17px;
+                    height: 17px;
+                }
+            }
+        }
+
+        .listItem:last-child {
+            margin-bottom: 0;
         }
     }
 }

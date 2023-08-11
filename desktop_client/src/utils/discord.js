@@ -12,9 +12,9 @@ const joinRoom = (roomId) => {
     });
 };
 
-const getIconUrl = (tab, additionalInfo) => {
-    if (additionalInfo && additionalInfo.imagePath) {
-        return additionalInfo.imagePath;
+const getIconUrl = (tab, additionalTabInfo) => {
+    if (additionalTabInfo && additionalTabInfo.imagePath) {
+        return additionalTabInfo.imagePath;
     }
 
     let iconUrl = "https://discord.hb.ru-msk.vkcs.cloud/internet.jpg";
@@ -31,9 +31,9 @@ const getIconUrl = (tab, additionalInfo) => {
     return iconUrl;
 };
 
-const getTabInfo = (tab, additionalInfo) => {
+const getTabInfo = (tab, additionalTabInfo) => {
     let tabUrl;
-    const iconUrl = getIconUrl(tab, additionalInfo);
+    const iconUrl = getIconUrl(tab, additionalTabInfo);
 
     if (tab.url) {
         tabUrl = tab.url.split("://")[1].split("/")[0];
@@ -52,9 +52,9 @@ const setupListeners = (client, socket) => {
             console.log(body);
             try {
                 if (!body || !body.tab) return;
-                const { tab, additionalInfo } = body;
+                const { tab, additionalTabInfo } = body;
 
-                const { tabUrl, iconUrl } = getTabInfo(tab, additionalInfo);
+                const { tabUrl, iconUrl } = getTabInfo(tab, additionalTabInfo);
 
                 await client.setActivity({
                     largeImageKey: iconUrl,
@@ -78,7 +78,9 @@ const setupConnection = () => {
         setInterval(() => {
             if (socket.connected === true) {
                 socketConnected = true;
-                discordConnected && socketConnected ? resolve("connected") : null;
+                discordConnected && socketConnected
+                    ? resolve("connected")
+                    : null;
             }
         }, 1000);
 

@@ -7,6 +7,7 @@
         <script src="./socket.io.min.js"></script>
         <script src="popup.js" defer></script>
         <link rel="stylesheet" href="popup.css" />
+
         <title>Discord Presence</title>
     </head>
     <body>
@@ -19,47 +20,117 @@
             <div pageId="2" class="currentPageSettings page disabled">
                 <div class="wrapper">
                     <div style="font-size: medium">
-                        Upload Custom Icon for This Page:
+                        <div class="imageUploadSection">
+                            Upload Custom Icon for This Page:
 
-                        <div class="imageUploadField">
-                            <label for="imageUpload" class="imageUploadInput">
-                                <img
-                                    src="./assets/upload.png"
-                                    class="uploadIcon"
-                                    alt="Uplaod Icon"
+                            <div class="imageUploadField">
+                                <label
+                                    for="imageUpload"
+                                    class="imageUploadInput"
+                                >
+                                    <img
+                                        src="./assets/upload.png"
+                                        class="uploadIcon"
+                                        alt="Uplaod Icon"
+                                    />
+                                    Upload</label
+                                >
+                                <input
+                                    type="file"
+                                    id="imageUpload"
+                                    accept="image/png, image/jpg, image/jpeg"
                                 />
-                                Upload</label
-                            >
-                            <input
-                                type="file"
-                                id="imageUpload"
-                                accept="image/png, image/jpg, image/jpeg"
-                            />
+
+                                <div>
+                                    <p class="uploadedFileInfo">
+                                        No Image Uploaded
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <p class="uploadedFileInfo">No Image Uploaded</p>
+
+                        <div class="pinPageSection">
+                            Pin the page:
+                            <input type="checkbox" class="pinPageCheckbox" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div pageId="3" class="settingsPage page disabled">
-                <div class="wrapper">
+            <div pageId="3" class="settingsPage disabled page">
+                <div pageId="1" class="wrapper settingsSubPage">
                     <div class="settingsItem">
                         <div class="settingTitle">White List</div>
-                        <div class="editButton">Edit</div>
+                        <div class="editButton settingsNav" pageId="2">
+                            Edit
+                        </div>
                     </div>
                     <div class="settingsItem">
                         <div class="settingTitle">Black List</div>
-                        <div class="editButton">Edit</div>
+                        <div class="editButton settingsNav" pageId="3">
+                            Edit
+                        </div>
                     </div>
                     <div class="settingsItem">
                         <div class="settingTitle">Custom Interfaces</div>
-                        <div class="editButton">Edit</div>
+                        <div class="editButton settingsNav" pageId="4">
+                            Edit
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    pageId="2"
+                    class="wrapper disabled settingsSubPage listPage"
+                >
+                    <div class="listHeaderWrapper">
+                        <div class="backIconDiv">
+                            <img
+                                pageId="1"
+                                src="./assets/back.png"
+                                class="backIcon settingsNav"
+                                alt=""
+                            />
+                        </div>
+                        <div class="listHeader">White List</div>
+                        <div class="addPage addPageWhiteList">
+                            Add This Page
+                        </div>
+                    </div>
+
+                    <div
+                        class="listItemsContainter listItemsContainterWhiteList"
+                    >
+                        <div class="listItem"></div>
+                    </div>
+                </div>
+
+                <div
+                    pageId="3"
+                    class="wrapper disabled settingsSubPage listPage"
+                >
+                    <div class="listHeaderWrapper">
+                        <div class="backIconDiv">
+                            <img
+                                pageId="1"
+                                src="./assets/back.png"
+                                class="backIcon settingsNav"
+                                alt=""
+                            />
+                        </div>
+                        <div class="listHeader">Black List</div>
+                        <div class="addPage addPageBlackList">
+                            Add This Page
+                        </div>
+                    </div>
+
+                    <div
+                        class="listItemsContainter listItemsContainterBlackList"
+                    >
+                        <div class="listItem"></div>
                     </div>
                 </div>
             </div>
-
             <div class="bottomNavbar">
                 <div pageId="1" class="navbarItem activeNavbarItem">Code</div>
                 <div pageId="2" class="navbarItem">This Page</div>
