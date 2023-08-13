@@ -19,6 +19,8 @@ const listItemsContainterBlackList = document.querySelector(
 const settingsSubPages = document.querySelectorAll(".settingsSubPage");
 const settingsNavigationItems = document.querySelectorAll(".settingsNav");
 
+const changeEnabledButtons = document.querySelectorAll(".changeEnabledButton");
+
 const getStorageAndTab = async () => {
     let storage = await chrome.storage.sync.get();
 
@@ -60,13 +62,12 @@ const getTabInfo = async () => {
 
 const loadPageInfo = async () => {
     const { storage, tab } = await getStorageAndTab();
+    console.log(storage);
     roomIdContainer.innerText = storage.roomId;
 
     if (storage.pinnedPage === tab.id) {
         pinPageCheckbox.checked = true;
     }
-
-    console.log(storage);
 
     const tabInfo = await getTabInfo();
     if (!tabInfo) return;
@@ -210,6 +211,55 @@ const handleAddItemToList = async (listName) => {
 
     await updateList(listName);
 };
+
+const handleChangeListEnabled = async (element) => {
+    if (!element) return;
+    const list = element.getAttribute("list");
+    if (!list) return;
+    let enabled = element.innerHTML === "Enabled" ? true : false;
+
+    if (enabled) {
+        element.innerHTML = "Disabled";
+        element.classList.add("disableButton");
+        element.classList.remove("enableButton");
+    } else {
+        element.innerHTML = "Enabled";
+        element.classList.remove("disableButton");
+        element.classList.add("enableButton");
+    }
+
+    if (list === "whiteList") {
+        await chrome.storage.sync.set({
+            whiteListEnabled: !enabled,
+        });
+    } else if (list === "blackList") {
+        await chrome.storage.sync.set({
+            blackListEnabled: !enabled,
+        });
+    }
+};
+
+changeEnabledButtons.forEach(async (button) => {
+    const { storage } = await getStorageAndTab();
+    let list = button.getAttribute("list");
+    if (list === "whiteList") {
+        if (storage.whiteListEnabled) {
+            button.innerHTML = "Enabled";
+            button.classList.add("enableButton");
+            button.classList.remove("disableButton");
+        }
+    } else if (list === "blackList") {
+        if (storage.blackListEnabled) {
+            button.innerHTML = "Enabled";
+            button.classList.add("enableButton");
+            button.classList.remove("disableButton");
+        }
+    }
+
+    button.addEventListener("click", () => {
+        handleChangeListEnabled(button);
+    });
+});
 
 addPageWhiteList.addEventListener("click", async () => {
     await handleAddItemToList("whiteList");

@@ -155,9 +155,20 @@ body {
             flex: 1;
         }
 
+        .enableButton {
+            color: green;
+            cursor: pointer;
+        }
+
+        .disableButton {
+            color: red;
+            cursor: pointer;
+        }
+
         .editButton {
             color: rgb(40, 40, 255);
             cursor: pointer;
+            margin-left: 10px;
         }
     }
 }

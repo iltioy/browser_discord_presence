@@ -137,9 +137,18 @@ body {
 .settingsPage .settingsItem .settingTitle {
   flex: 1;
 }
+.settingsPage .settingsItem .enableButton {
+  color: green;
+  cursor: pointer;
+}
+.settingsPage .settingsItem .disableButton {
+  color: red;
+  cursor: pointer;
+}
 .settingsPage .settingsItem .editButton {
   color: rgb(40, 40, 255);
   cursor: pointer;
+  margin-left: 10px;
 }
 
 .listPage {

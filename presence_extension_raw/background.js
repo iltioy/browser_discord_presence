@@ -1,3 +1,5 @@
+const reservedUrls = ["chess.com"];
+
 chrome.runtime.onInstalled.addListener(async () => {
     try {
         const res = await fetch("http://localhost:5000/getUniqueRoomId");
@@ -11,7 +13,34 @@ chrome.runtime.onInstalled.addListener(async () => {
     }
 });
 
-const sendTabInfo = async () => {
+chrome.runtime.onMessage.addListener(async (message) => {
+    try {
+        const tabs = await chrome.tabs.query({
+            active: true,
+            currentWindow: true,
+        });
+        const tab = tabs[0];
+        if (!tab) return;
+
+        if (tab.url !== message.tabUrl) {
+            return;
+        }
+
+        if (message.site) {
+            const { site, tabUrl, info } = message;
+
+            sendTabInfo({
+                site,
+                tabUrl,
+                info,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+const sendTabInfo = async (pageInterface = {}) => {
     try {
         const tabs = await chrome.tabs.query({
             active: true,
@@ -29,6 +58,10 @@ const sendTabInfo = async () => {
             tabUrl = tabUrl.slice(4);
         }
 
+        if (reservedUrls.includes(tabUrl) && !pageInterface.site) {
+            return;
+        }
+
         let additionalTabInfo = storage[tabUrl];
         let settings = {
             pinnedPage: storage.pinnedPage,
@@ -36,13 +69,11 @@ const sendTabInfo = async () => {
             blackList: storage.blackList,
         };
 
-        // let additionalInfo = await chrome.storage.sync.get(tabUrl);
-        // let addInfo = additionalInfo[Object.keys(additionalInfo)[0]];
-
         const data = {
             tab,
             roomId,
             additionalTabInfo,
+            pageInterface,
             settings,
         };
 
@@ -59,5 +90,5 @@ const sendTabInfo = async () => {
     }
 };
 
-chrome.tabs.onActivated.addListener(sendTabInfo);
-chrome.tabs.onUpdated.addListener(sendTabInfo);
+chrome.tabs.onActivated.addListener(() => sendTabInfo());
+chrome.tabs.onUpdated.addListener(() => sendTabInfo());
