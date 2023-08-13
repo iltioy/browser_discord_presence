@@ -77,6 +77,10 @@ const sendTabInfo = async (pageInterface = {}) => {
             settings,
         };
 
+        if (storage.lastSendUrl === tab.url) {
+            return;
+        }
+
         const res = await fetch("http://localhost:5000/tabChanged", {
             headers: {
                 "Content-Type": "application/json",
@@ -84,6 +88,10 @@ const sendTabInfo = async (pageInterface = {}) => {
             method: "POST",
 
             body: JSON.stringify(data),
+        });
+
+        await chrome.storage.sync.set({
+            lastSendUrl: tab.url,
         });
     } catch (error) {
         console.log(error);

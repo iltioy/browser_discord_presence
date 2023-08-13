@@ -1,15 +1,29 @@
 const RPC = require("discord-rpc");
 const { io } = require("socket.io-client");
+const { getCustomInterfaceInfo } = require("./interfaces");
 
-const clientId = "585164140947963924";
+const clientId = "1136297214516400269";
 // 585164140947963924
 // 1136297214516400269
+
+// Chess.com
+const chessClientId = "1140399707093479576";
+
 let socket;
 
 const joinRoom = (roomId) => {
     socket.emit("join_room", {
         roomId: roomId,
     });
+};
+
+const clearCustomInterfacesActivity = async (customInterfaces) => {
+    if (!customInterfaces) return;
+    const keys = Object.keys(customInterfaces);
+
+    for (let i = 0; i < keys.length; i++) {
+        await customInterfaces[keys[i]].clearActivity();
+    }
 };
 
 const getIconUrl = (tab, additionalTabInfo) => {
@@ -46,7 +60,7 @@ const getTabInfo = (tab, additionalTabInfo) => {
     return { tabUrl, iconUrl };
 };
 
-const setupListeners = (client, socket) => {
+const setupListeners = (client, socket, customClients) => {
     client.on("ready", async () => {
         socket.on("tabChanged", async (body) => {
             console.log(body);
@@ -54,13 +68,45 @@ const setupListeners = (client, socket) => {
                 if (!body || !body.tab) return;
                 const { tab, additionalTabInfo } = body;
 
-                const { tabUrl, iconUrl } = getTabInfo(tab, additionalTabInfo);
+                let { tabUrl, iconUrl } = getTabInfo(tab, additionalTabInfo);
+                let state = `Visiting ${tabUrl}`;
+                let details;
+                let buttons;
+                let customClientId;
 
-                await client.setActivity({
-                    largeImageKey: iconUrl,
-                    state: `Visiting ${tabUrl}`,
-                    startTimestamp: Date.now(),
-                });
+                if (body.pageInterface && body.pageInterface.site) {
+                    let info = getCustomInterfaceInfo(body);
+                    state = info.status;
+                    iconUrl = info.iconUrl;
+                    details = info.details;
+                    buttons = info.buttons;
+                    customClientId = info.customClientId;
+                }
+
+                if (
+                    customClientId &&
+                    customClients &&
+                    customClients[customClientId]
+                ) {
+                    const cutomCleint = customClients[customClientId];
+                    await client.clearActivity();
+                    await cutomCleint.setActivity({
+                        largeImageKey: iconUrl,
+                        state,
+                        details,
+                        buttons,
+                        startTimestamp: Date.now(),
+                    });
+                } else {
+                    await clearCustomInterfacesActivity(customClients);
+                    await client.setActivity({
+                        largeImageKey: iconUrl,
+                        state,
+                        details,
+                        buttons,
+                        startTimestamp: Date.now(),
+                    });
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -68,8 +114,24 @@ const setupListeners = (client, socket) => {
     });
 };
 
+const createCustomClients = async () => {
+    const chessClient = new RPC.Client({
+        transport: "ipc",
+    });
+
+    await chessClient.login({ clientId: chessClientId }).catch(() => {
+        console.log("chess error");
+    });
+
+    const customCliets = {
+        chess: chessClient,
+    };
+
+    return customCliets;
+};
+
 const setupConnection = () => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let discordConnected = false;
         let socketConnected = false;
 
@@ -88,7 +150,9 @@ const setupConnection = () => {
             transport: "ipc",
         });
 
-        setupListeners(client, socket);
+        const customClients = await createCustomClients();
+
+        setupListeners(client, socket, customClients);
 
         client.login({ clientId }).then(() => {
             discordConnected = true;
