@@ -1,7 +1,17 @@
 const reservedUrls = ["chess.com"];
 
+const setInterfaces = async () => {
+    chrome.storage.sync.set({
+        interfaces: {
+            chess: {},
+        },
+    });
+};
+
 chrome.runtime.onInstalled.addListener(async () => {
     try {
+        await setInterfaces();
+
         const res = await fetch("http://localhost:5000/getUniqueRoomId");
         const { roomId } = await res.json();
 
@@ -27,18 +37,95 @@ chrome.runtime.onMessage.addListener(async (message) => {
         }
 
         if (message.site) {
-            const { site, tabUrl, info } = message;
+            const { site, tabUrl, info, passTheSameUrl } = message;
 
             sendTabInfo({
                 site,
                 tabUrl,
                 info,
+                passTheSameUrl,
             });
         }
     } catch (error) {
         console.log(error);
     }
 });
+
+const sendTabInfo = async (pageInterface = {}) => {
+    try {
+        // Get current tab and room id
+        const tabs = await chrome.tabs.query({
+            active: true,
+            currentWindow: true,
+        });
+        const tab = tabs[0];
+
+        if (!tab) return;
+
+        const storage = await chrome.storage.sync.get();
+        const roomId = storage.roomId;
+
+        // Get core url
+        let tabUrl = tab.url.split("://")[1].split("/")[0];
+        if (tabUrl.startsWith("www.")) {
+            tabUrl = tabUrl.slice(4);
+        }
+
+        // Check if pinned page passes
+        const { isPinnedPageExists, isTabPinnedPage } = await handlePinnedPage(
+            tab
+        );
+        if (isPinnedPageExists && !isTabPinnedPage) return;
+
+        // Check if black/white lists pass
+
+        const { isBlackListEnabled, isPageInBlackList } = await handleBlacklist(
+            tabUrl
+        );
+        const { isPageInWhiteList, isWhiteListEnabled } = await handleWhitelist(
+            tabUrl
+        );
+
+        if (isBlackListEnabled && isPageInBlackList) return;
+
+        if (isWhiteListEnabled && !isPageInWhiteList) return;
+
+        // Check url in reserved urls and return. If page interface send, keep to fetching
+        if (reservedUrls.includes(tabUrl) && !pageInterface.site) {
+            return;
+        }
+
+        // Gathering data to send
+        let additionalTabInfo = storage[tabUrl];
+
+        const data = {
+            tab,
+            roomId,
+            additionalTabInfo,
+            pageInterface,
+        };
+
+        // If url is the same as previous send, do not send it
+        if (storage.lastSendUrl === tab.url && !pageInterface.passTheSameUrl) {
+            return;
+        }
+
+        const res = await fetch("http://localhost:5000/tabChanged", {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: "POST",
+
+            body: JSON.stringify(data),
+        });
+
+        await chrome.storage.sync.set({
+            lastSendUrl: tab.url,
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 const handleBlacklist = async (tabUrl) => {
     const storage = await chrome.storage.sync.get();
@@ -91,75 +178,6 @@ const handlePinnedPage = async (tab) => {
     }
 
     return { isPinnedPageExists, isTabPinnedPage };
-};
-
-const sendTabInfo = async (pageInterface = {}) => {
-    try {
-        const tabs = await chrome.tabs.query({
-            active: true,
-            currentWindow: true,
-        });
-        const tab = tabs[0];
-
-        if (!tab) return;
-
-        const storage = await chrome.storage.sync.get();
-        const roomId = storage.roomId;
-
-        let tabUrl = tab.url.split("://")[1].split("/")[0];
-        if (tabUrl.startsWith("www.")) {
-            tabUrl = tabUrl.slice(4);
-        }
-
-        const { isPinnedPageExists, isTabPinnedPage } = await handlePinnedPage(tab);
-        if (isPinnedPageExists && !isTabPinnedPage) return;
-        console.log("passed 1");
-
-        const { isBlackListEnabled, isPageInBlackList } = await handleBlacklist(tabUrl);
-        const { isPageInWhiteList, isWhiteListEnabled } = await handleWhitelist(tabUrl);
-
-        if (isBlackListEnabled && isPageInBlackList) return;
-        console.log("passed 2");
-
-        if (isWhiteListEnabled && !isPageInWhiteList) return;
-        console.log("passed 3");
-
-        if (reservedUrls.includes(tabUrl) && !pageInterface.site) {
-            return;
-        }
-
-        console.log("passed 4");
-
-        let additionalTabInfo = storage[tabUrl];
-
-        const data = {
-            tab,
-            roomId,
-            additionalTabInfo,
-            pageInterface,
-        };
-
-        if (storage.lastSendUrl === tab.url) {
-            console.log("not passed(");
-
-            return;
-        }
-
-        const res = await fetch("http://localhost:5000/tabChanged", {
-            headers: {
-                "Content-Type": "application/json",
-            },
-            method: "POST",
-
-            body: JSON.stringify(data),
-        });
-
-        await chrome.storage.sync.set({
-            lastSendUrl: tab.url,
-        });
-    } catch (error) {
-        console.log(error);
-    }
 };
 
 chrome.tabs.onActivated.addListener(() => sendTabInfo());

@@ -53,16 +53,40 @@ if (tabUrl.startsWith("chess.com")) {
     setInterval(async () => {
         try {
             const status = await checkGameStatus();
+            const storage = await chrome.storage.sync.get();
+            let passTheSameUrl = false;
+
+            const { interfaces } = storage;
+
+            if (
+                interfaces &&
+                interfaces.chess &&
+                interfaces.chess.lastSendStatus !== status
+            ) {
+                passTheSameUrl = true;
+            }
 
             const message = {
                 site: "chess.com",
                 tabUrl: window.location.href,
+                passTheSameUrl,
                 info: {
                     status,
                 },
             };
 
             await chrome.runtime.sendMessage(message);
+
+            if (interfaces) {
+                await chrome.storage.sync.set({
+                    interfaces: {
+                        ...interfaces,
+                        chess: {
+                            lastSendStatus: status,
+                        },
+                    },
+                });
+            }
         } catch (error) {
             console.log(error);
         }

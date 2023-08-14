@@ -1,10 +1,11 @@
 const CHESS_COM_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/chess.jpg";
-const BLITZ_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/blitz.png";
-const BULLET_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/bullet.png";
-const DAILY_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/daily.png";
-const RAPID_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/rapid.png";
-const ANALYSIS_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/analysis.png";
-const REVIEW_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/review.png";
+const BLITZ_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/blitz_new.png";
+const BULLET_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/bullet_new.png";
+const DAILY_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/daily_new.png";
+const RAPID_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/rapid_new.png";
+const ANALYSIS_ICON_URL =
+    "https://discord.hb.ru-msk.vkcs.cloud/analysis_new.png";
+const REVIEW_ICON_URL = "https://discord.hb.ru-msk.vkcs.cloud/review_new.png";
 
 const STATUS_NONE = "none";
 const STATUS_BLITZ = "blitz";
