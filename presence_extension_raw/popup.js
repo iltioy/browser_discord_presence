@@ -9,17 +9,16 @@ const pinPageCheckbox = document.querySelector(".pinPageCheckbox");
 const addPageWhiteList = document.querySelector(".addPageWhiteList");
 const addPageBlackList = document.querySelector(".addPageBlackList");
 
-const listItemsContainterWhiteList = document.querySelector(
-    ".listItemsContainterWhiteList"
-);
-const listItemsContainterBlackList = document.querySelector(
-    ".listItemsContainterBlackList"
-);
+const listItemsContainterWhiteList = document.querySelector(".listItemsContainterWhiteList");
+const listItemsContainterBlackList = document.querySelector(".listItemsContainterBlackList");
 
 const settingsSubPages = document.querySelectorAll(".settingsSubPage");
 const settingsNavigationItems = document.querySelectorAll(".settingsNav");
 
 const changeEnabledButtons = document.querySelectorAll(".changeEnabledButton");
+
+const pinPageIdDiv = document.querySelector(".pinPageIdDiv");
+const clearPinnedPageButton = document.querySelector(".clearPinnedPage");
 
 const getStorageAndTab = async () => {
     let storage = await chrome.storage.sync.get();
@@ -60,6 +59,11 @@ const getTabInfo = async () => {
     return storage[tabUrl];
 };
 
+const setRoomId = async () => {
+    const { storage, tab } = await getStorageAndTab();
+    roomIdContainer.innerText = storage.roomId;
+};
+
 const loadPageInfo = async () => {
     const { storage, tab } = await getStorageAndTab();
     console.log(storage);
@@ -67,6 +71,12 @@ const loadPageInfo = async () => {
 
     if (storage.pinnedPage === tab.id) {
         pinPageCheckbox.checked = true;
+    }
+
+    if (storage.pinnedPage) {
+        pinPageIdDiv.innerHTML = `id: ${storage.pinnedPage}`;
+        pinPageIdDiv.classList.remove("disabled");
+        clearPinnedPageButton.classList.remove("disabled");
     }
 
     const tabInfo = await getTabInfo();
@@ -304,10 +314,7 @@ imageUpload.addEventListener("change", async () => {
             body: formData,
         };
 
-        const res = await fetch(
-            "http://localhost:5000/uploadPageIcon",
-            options
-        );
+        const res = await fetch("http://localhost:5000/uploadPageIcon", options);
         const data = await res.json();
 
         if (!data.tabUrl) return;
@@ -326,6 +333,19 @@ imageUpload.addEventListener("change", async () => {
     }
 });
 
+clearPinnedPageButton.addEventListener("click", async () => {
+    try {
+        await chrome.storage.sync.set({
+            pinnedPage: null,
+        });
+
+        pinPageIdDiv.classList.add("disabled");
+        clearPinnedPageButton.classList.add("disabled");
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 pinPageCheckbox.addEventListener("change", async (e) => {
     console.log(e.target.checked);
     const { storage, tab } = await getStorageAndTab();
@@ -335,7 +355,6 @@ pinPageCheckbox.addEventListener("change", async (e) => {
     if (isCheched) {
         console.log("checked");
         if (storage.pinnedPage !== tab.id) {
-            console.log("changed");
             await chrome.storage.sync.set({
                 pinnedPage: tab.id,
             });

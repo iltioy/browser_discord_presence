@@ -104,6 +104,30 @@ body {
         margin-bottom: 15px;
     }
 
+    .pinnedPageWrapper {
+        display: flex;
+        flex-direction: row;
+
+        .pinnedPageIdSection {
+            display: flex;
+            flex-direction: column;
+            margin-left: 30px;
+            margin-top: 20px;
+
+            .pinPageIdDiv {
+                color: grey;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .clearPinnedPage {
+            color: grey;
+            cursor: pointer;
+        }
+    }
+
     .pinPageSection {
         display: flex;
         flex-direction: row;

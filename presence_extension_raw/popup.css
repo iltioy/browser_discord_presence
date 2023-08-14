@@ -93,6 +93,26 @@ body {
 .currentPageSettings .imageUploadSection {
   margin-bottom: 15px;
 }
+.currentPageSettings .pinnedPageWrapper {
+  display: flex;
+  flex-direction: row;
+}
+.currentPageSettings .pinnedPageWrapper .pinnedPageIdSection {
+  display: flex;
+  flex-direction: column;
+  margin-left: 30px;
+  margin-top: 20px;
+}
+.currentPageSettings .pinnedPageWrapper .pinnedPageIdSection .pinPageIdDiv {
+  color: grey;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.currentPageSettings .pinnedPageWrapper .clearPinnedPage {
+  color: grey;
+  cursor: pointer;
+}
 .currentPageSettings .pinPageSection {
   display: flex;
   flex-direction: row;

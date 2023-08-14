@@ -24,10 +24,7 @@
                             Upload Custom Icon for This Page:
 
                             <div class="imageUploadField">
-                                <label
-                                    for="imageUpload"
-                                    class="imageUploadInput"
-                                >
+                                <label for="imageUpload" class="imageUploadInput">
                                     <img
                                         src="./assets/upload.png"
                                         class="uploadIcon"
@@ -42,16 +39,20 @@
                                 />
 
                                 <div>
-                                    <p class="uploadedFileInfo">
-                                        No Image Uploaded
-                                    </p>
+                                    <p class="uploadedFileInfo">No Image Uploaded</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="pinPageSection">
-                            Pin the page:
-                            <input type="checkbox" class="pinPageCheckbox" />
+                        <div class="pinnedPageWrapper">
+                            <div class="pinPageSection">
+                                <div>Pin the page:</div>
+                                <input type="checkbox" class="pinPageCheckbox" />
+                            </div>
+                            <div class="pinnedPageIdSection">
+                                <div class="pinPageIdDiv disabled">id:</div>
+                                <div class="clearPinnedPage disabled">clear</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -61,40 +62,25 @@
                 <div pageId="1" class="wrapper settingsSubPage">
                     <div class="settingsItem">
                         <div class="settingTitle">White List</div>
-                        <div
-                            list="whiteList"
-                            class="changeEnabledButton disableButton"
-                        >
+                        <div list="whiteList" class="changeEnabledButton disableButton">
                             Disabled
                         </div>
-                        <div class="editButton settingsNav" pageId="2">
-                            Edit
-                        </div>
+                        <div class="editButton settingsNav" pageId="2">Edit</div>
                     </div>
                     <div class="settingsItem">
                         <div class="settingTitle">Black List</div>
-                        <div
-                            list="blackList"
-                            class="changeEnabledButton disableButton"
-                        >
+                        <div list="blackList" class="changeEnabledButton disableButton">
                             Disabled
                         </div>
-                        <div class="editButton settingsNav" pageId="3">
-                            Edit
-                        </div>
+                        <div class="editButton settingsNav" pageId="3">Edit</div>
                     </div>
                     <div class="settingsItem">
                         <div class="settingTitle">Custom Interfaces</div>
-                        <div class="editButton settingsNav" pageId="4">
-                            Edit
-                        </div>
+                        <div class="editButton settingsNav" pageId="4">Edit</div>
                     </div>
                 </div>
 
-                <div
-                    pageId="2"
-                    class="wrapper disabled settingsSubPage listPage"
-                >
+                <div pageId="2" class="wrapper disabled settingsSubPage listPage">
                     <div class="listHeaderWrapper">
                         <div class="backIconDiv">
                             <img
@@ -105,22 +91,15 @@
                             />
                         </div>
                         <div class="listHeader">White List</div>
-                        <div class="addPage addPageWhiteList">
-                            Add This Page
-                        </div>
+                        <div class="addPage addPageWhiteList">Add This Page</div>
                     </div>
 
-                    <div
-                        class="listItemsContainter listItemsContainterWhiteList"
-                    >
+                    <div class="listItemsContainter listItemsContainterWhiteList">
                         <div class="listItem"></div>
                     </div>
                 </div>
 
-                <div
-                    pageId="3"
-                    class="wrapper disabled settingsSubPage listPage"
-                >
+                <div pageId="3" class="wrapper disabled settingsSubPage listPage">
                     <div class="listHeaderWrapper">
                         <div class="backIconDiv">
                             <img
@@ -131,14 +110,10 @@
                             />
                         </div>
                         <div class="listHeader">Black List</div>
-                        <div class="addPage addPageBlackList">
-                            Add This Page
-                        </div>
+                        <div class="addPage addPageBlackList">Add This Page</div>
                     </div>
 
-                    <div
-                        class="listItemsContainter listItemsContainterBlackList"
-                    >
+                    <div class="listItemsContainter listItemsContainterBlackList">
                         <div class="listItem"></div>
                     </div>
                 </div>
