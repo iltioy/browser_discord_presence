@@ -35,4 +35,15 @@ saveButton.addEventListener("click", () => {
     ipcRenderer.send("code:save", {
         code,
     });
+
+    Toastify.toast({
+        text: "Connected!",
+        duration: 3000,
+        close: false,
+        style: {
+            background: "green",
+            color: "white",
+            textAlign: "center",
+        },
+    });
 });

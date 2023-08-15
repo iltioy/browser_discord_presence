@@ -4,6 +4,7 @@ const pageItems = document.querySelectorAll(".page");
 const restoreRoomIdButton = document.querySelector(".restoreRoomIdButton");
 const imageUpload = document.querySelector("#imageUpload");
 const uploadedFileInfo = document.querySelector(".uploadedFileInfo");
+const uploadedFileInfoClearButton = document.querySelector(".uploadedFileInfoClear");
 const pinPageCheckbox = document.querySelector(".pinPageCheckbox");
 
 const addPageWhiteList = document.querySelector(".addPageWhiteList");
@@ -19,6 +20,10 @@ const changeEnabledButtons = document.querySelectorAll(".changeEnabledButton");
 
 const pinPageIdDiv = document.querySelector(".pinPageIdDiv");
 const clearPinnedPageButton = document.querySelector(".clearPinnedPage");
+
+const downloadPageNexButton = document.querySelector(".downloadPageNexButton");
+const downloadPage = document.querySelector(".downloadPage");
+const mainApp = document.querySelector(".App");
 
 const getStorageAndTab = async () => {
     let storage = await chrome.storage.sync.get();
@@ -67,6 +72,12 @@ const setRoomId = async () => {
 const loadPageInfo = async () => {
     const { storage, tab } = await getStorageAndTab();
     console.log(storage);
+
+    if (storage.disableDownloadPage) {
+        mainApp.classList.remove("disabled");
+        downloadPage.classList.add("disabled");
+    }
+
     roomIdContainer.innerText = storage.roomId;
 
     if (storage.pinnedPage === tab.id) {
@@ -86,6 +97,7 @@ const loadPageInfo = async () => {
 
     if (imageName) {
         uploadedFileInfo.innerText = imageName;
+        uploadedFileInfoClearButton.classList.remove("disabled");
     }
 };
 
@@ -294,6 +306,33 @@ restoreRoomIdButton.addEventListener("click", async () => {
     }
 });
 
+uploadedFileInfoClearButton.addEventListener("click", async () => {
+    const { storage, tab } = await getStorageAndTab();
+    const tabUrl = getTabUrl(tab);
+
+    if (!storage[tabUrl]) return;
+
+    const data = {
+        imageKey: storage[tabUrl].imageKey,
+    };
+
+    await chrome.storage.sync.set({
+        [tabUrl]: {},
+    });
+
+    const res = await fetch("http://localhost:5000/deletePageIcon", {
+        headers: {
+            "Content-Type": "application/json",
+        },
+        method: "DELETE",
+
+        body: JSON.stringify(data),
+    });
+
+    uploadedFileInfo.innerHTML = "No Image Uploaded";
+    uploadedFileInfoClearButton.classList.add("disabled");
+});
+
 imageUpload.addEventListener("change", async () => {
     try {
         const tabs = await chrome.tabs.query({
@@ -367,4 +406,13 @@ pinPageCheckbox.addEventListener("change", async (e) => {
             });
         }
     }
+});
+
+downloadPageNexButton.addEventListener("click", async () => {
+    downloadPage.classList.add("disabled");
+    mainApp.classList.remove("disabled");
+
+    chrome.storage.sync.set({
+        disableDownloadPage: true,
+    });
 });

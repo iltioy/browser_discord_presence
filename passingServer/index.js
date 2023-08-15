@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const { uid } = require("uid");
 const fs = require("fs");
 const upload = require("./services/fileUpload");
-const { uploadFile } = require("./services/bucket");
+const { uploadFile, deleteFile } = require("./services/bucket");
 
 const io = new Server(server, {
     cors: {
@@ -43,8 +43,7 @@ io.on("connection", (socket) => {
 
 app.post("/tabChanged", (req, res) => {
     console.log(req.body);
-    const { roomId, tab, additionalTabInfo, settings, pageInterface } =
-        req.body;
+    const { roomId, tab, additionalTabInfo, settings, pageInterface } = req.body;
 
     io.to(roomId).emit("tabChanged", {
         roomId,
@@ -61,6 +60,18 @@ app.get("/getUniqueRoomId", (req, res) => {
     const roomId = uid(16);
 
     res.status(200).json({ roomId });
+});
+
+app.delete("/deletePageIcon", async (req, res) => {
+    const { imageKey } = req.body;
+
+    if (!imageKey) {
+        res.send("image key required!");
+        return;
+    }
+
+    await deleteFile(imageKey);
+    res.status(200).send("image deleted!");
 });
 
 app.post("/uploadPageIcon", upload.single("image"), async (req, res) => {

@@ -8,13 +8,20 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-.App {
+.App,
+.downloadPage {
   width: 350px;
   height: 250px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   flex-direction: column;
+}
+
+.downloadPageWrapper {
+  height: 80%;
+  width: 80%;
+  font-size: 15px;
 }
 
 .disabled {
@@ -81,6 +88,9 @@ body {
   flex-direction: row;
   align-items: center;
 }
+.currentPageSettings .uploadedFileInfoClear {
+  cursor: pointer;
+}
 .currentPageSettings .uploadedFileInfo {
   color: grey;
   font-size: small;
@@ -101,7 +111,6 @@ body {
   display: flex;
   flex-direction: column;
   margin-left: 30px;
-  margin-top: 20px;
 }
 .currentPageSettings .pinnedPageWrapper .pinnedPageIdSection .pinPageIdDiv {
   color: grey;

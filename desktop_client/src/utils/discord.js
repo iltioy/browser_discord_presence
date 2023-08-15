@@ -1,12 +1,14 @@
 const RPC = require("discord-rpc");
 const { io } = require("socket.io-client");
 const { getCustomInterfaceInfo } = require("./interfaces");
+const { preservedUrlIcons } = require("./icons");
 
 const clientId = "1136297214516400269";
 // 585164140947963924
 // 1136297214516400269
 
 // Chess.com
+// "1140399707093479576"
 const chessClientId = "1140399707093479576";
 
 let socket;
@@ -26,13 +28,16 @@ const clearCustomInterfacesActivity = async (customInterfaces) => {
     }
 };
 
-const getIconUrl = (tab, additionalTabInfo) => {
+const getIconUrl = ({ tab, additionalTabInfo, tabUrl }) => {
     if (additionalTabInfo && additionalTabInfo.imagePath) {
         return additionalTabInfo.imagePath;
     }
 
-    let iconUrl = "https://discord.hb.ru-msk.vkcs.cloud/internet.jpg";
+    if (preservedUrlIcons[tabUrl]) {
+        return preservedUrlIcons[tabUrl];
+    }
 
+    let iconUrl = "https://dsicons.hb.ru-msk.vkcs.cloud/internet.jpg";
     if (
         tab.favIconUrl &&
         (tab.favIconUrl.endsWith(".jpg") ||
@@ -47,7 +52,6 @@ const getIconUrl = (tab, additionalTabInfo) => {
 
 const getTabInfo = (tab, additionalTabInfo) => {
     let tabUrl;
-    const iconUrl = getIconUrl(tab, additionalTabInfo);
 
     if (tab.url) {
         tabUrl = tab.url.split("://")[1].split("/")[0];
@@ -56,6 +60,8 @@ const getTabInfo = (tab, additionalTabInfo) => {
             tabUrl = tabUrl.slice(4);
         }
     }
+
+    const iconUrl = getIconUrl({ tab, additionalTabInfo, tabUrl });
 
     return { tabUrl, iconUrl };
 };
@@ -83,11 +89,7 @@ const setupListeners = (client, socket, customClients) => {
                     customClientId = info.customClientId;
                 }
 
-                if (
-                    customClientId &&
-                    customClients &&
-                    customClients[customClientId]
-                ) {
+                if (customClientId && customClients && customClients[customClientId]) {
                     const cutomCleint = customClients[customClientId];
                     await client.clearActivity();
                     await cutomCleint.setActivity({
@@ -99,6 +101,7 @@ const setupListeners = (client, socket, customClients) => {
                     });
                 } else {
                     await clearCustomInterfacesActivity(customClients);
+
                     await client.setActivity({
                         largeImageKey: iconUrl,
                         state,
@@ -140,9 +143,7 @@ const setupConnection = () => {
         setInterval(() => {
             if (socket.connected === true) {
                 socketConnected = true;
-                discordConnected && socketConnected
-                    ? resolve("connected")
-                    : null;
+                discordConnected && socketConnected ? resolve("connected") : null;
             }
         }, 1000);
 

